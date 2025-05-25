@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
+    <title>Document</title>
+</head>
+
+<body>
+<!--    <div class="relative isolate overflow-hidden bg-white">-->
+       
+            <div>           
+                <form action="/process" method="post" enctype="multipart/form-data">
+                    <div class="mt-10 flex flex-col justify-start items-start sm:flex-row sm:items-center  gap-x-1">
+                        
+
+                            <div style="display: flex; align-items: center;">
+                                <button type="submit">Process</button>
+                                <input type="file" name="pdf_docs" id="pdf_docs" accept=".pdf" multiple required type="file">
+                            </div>
+                            
+                        
+                    </div>
+                </form>
+            </div> 
+           
+        
+<!--    </div>-->
+</body>
+
+</html>
