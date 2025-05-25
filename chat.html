@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Bot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px; /* Static width */
+            max-width: 90%; /* Responsive only below this width */
+            border: 1px solid black; /* Black border around the chat */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex; /* Always displayed */
+            flex-direction: column;
+            background-color: white;
+        }
+    
+        .chat-header {
+            background-color: #06488f; /* Attractive header color */
+            color: white;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .chat-header h1 {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: normal;
+        }
+    
+        #welcome-message {
+            padding: 10px;
+            margin: 12% auto; /* Center horizontally */
+            background: #06488f; /* Set the background color */
+            border-radius: 5px;
+            color: white; /* Set text color to white */
+            width: 83%; /* Full responsiveness */
+            max-width: 420px; /* Keep the max width for larger screens */
+            font-size: 0.9em; /* Slightly smaller font size */
+        }
+    
+        .chat-content {
+            padding: 0.2rem; /* Use rem for responsive padding */
+            margin: 0.8rem; /* Use rem for responsive margin */
+        }
+    
+        .chat-content button {
+            margin: 0.2rem; /* Use rem for responsive margin */
+            padding: 0.5rem; /* Use rem for responsive padding */
+            display: inline-block; /* Change to inline-block for better layout */
+            border: none; /* Match the border color */
+            background: #06488f; /* Set the background color to match welcome message */
+            color: white; /* Set text color to white */
+            border-radius: 5px;
+            font-size: 0.9em; /* Match font size */
+            cursor: pointer;
+        }
+    
+        .chat-content button:hover {
+            background: #0056b3; /* Darker shade for hover effect */
+        }
+    
+        .chat-messages {
+            display: flex;
+            flex-direction: column; /* Stack messages vertically */
+            padding: 10px;
+            height: 250px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+    
+        .chat-message {
+            max-width: 80%; /* Limit the maximum width to 80% of the chat box */
+            margin-bottom: 10px; /* Space between messages */
+            padding: 5px; /* Consistent padding */
+            border-radius: 5px; /* Rounded corners */
+            font-family: 'Arial', sans-serif; /* Apply font family */
+        }
+    
+        .chat-message.user {
+            align-self: flex-end; /* Align user messages to the right */
+            background-color: #06488f; /* User message color */
+            color: white; /* Text color */
+        }
+    
+        .chat-message.bot {
+            align-self: flex-start; /* Align bot messages to the left */
+            background-color: #153352; /* Bot message color */
+            color: white; /* Text color */
+        }
+    
+        .input-form {
+            display: flex;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 0 0 8px 8px;
+        }
+    
+        .input-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            min-width: 0; /* Prevent input from overflowing */
+        }
+    
+        .input-form button {
+            margin-left: 10px;
+            background-color: #06488f;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .input-form button:hover {
+            background-color: #0056b3;
+        }
+    
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            height: 180px;  /* Reduced height */
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gray shadow */
+        }
+        
+        @media (max-width: 350px) { /* Responsive only below 350px */
+            .chat-container {
+                width: 90%; /* Adjust width for smaller screens */
+            }
+    
+            .chat-messages {
+                height: 180px;  /* Further adjust height for very small screens */
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h1>E-ChatBot</h1>
+        </div>
+        <div id="welcome-message">
+            <p id="welcome-text">
+                Hey there, Thanks for checking the "AM-Commerce" website. Hope you are doing well. How can I assist you today?
+            </p>
+        </div>
+        <div class="chat-content" id="chat-content">
+            <button onclick="showOptions('Shopping')" style="font-family: 'Courier New', monospace; font-weight: bold;">
+                Shopping Recommendation
+            </button>
+            <div class="allBtn"></div>
+        </div>
+        <div class="chat-content" id="chat-content1">
+            <button onclick="showOptions('Fashion')" style="font-family: 'Courier New', monospace; font-weight: bold;">
+                What's new in Fashion
+            </button>
+            <div class="allBtn"></div>
+        </div>
+        
+            <div class="chat-messages">
+                {% for message in chat_history %}
+                <div class="chat-message user"><strong></strong> {{ message.user }}</div>
+                <div class="chat-message bot"><strong></strong> {{ message.bot }}</div>
+                {% endfor %}
+            </div>
+        
+        <form action="/chat" method="post" class="input-form" id="inputForm">
+            <input type="text" name="user_question" placeholder="Type your question here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const welcomeText = document.getElementById('welcome-text');
+            typeWriter(welcomeText, 50); // Adjust speed as needed
+        });
+
+        function showOptions(category) {
+            const contentId = category === "Shopping" ? "chat-content1" : "chat-content2";
+            const options = category === "Shopping" ? 
+                ["Home", "Mobiles", "Womens", "Mens", "Baby", "ElectronicsDevices", "Sports", "FAQs", "Cart", "Checkout","Shop"] : 
+                ["Videos", "Blogs"];
+            const content = document.getElementById(contentId);
+            var allBtn = document.querySelectorAll(`.allBtn`);
+            var index = category === "Shopping" ? 0 : 1;
+
+            if (allBtn[index].childElementCount > 1) {
+                var e = allBtn[index];
+                while (e.lastElementChild) {
+                    e.removeChild(e.lastElementChild);
+                }
+            } else {
+                options.forEach((option) => {
+                    const button = document.createElement("button");
+                    button.innerText = option;
+                    button.classList.add("chatContentBtns");
+                    button.addEventListener("click", function () {
+                        handleOptionClick(option, category);
+                    });
+                    allBtn[index].append(button);
+                });
+            }
+        }
+
+        function handleOptionClick(option, category) {
+            switch (category) {
+                case "Shopping":
+                    handleShoppingOptionClick(option);
+                    break;
+                case "Fashion":
+                    handleFashionOptionClick(option);
+                    break;
+                default:
+                    alert("Invalid category");
+            }
+        }
+
+        function handleShoppingOptionClick(option) {
+            const links = {
+                "Baby": "https://e-chatbot.kesug.com/baby/",
+                "Home": "https://e-chatbot.kesug.com/",
+                "Mobiles": "https://e-chatbot.kesug.com/mobiles/",
+                "Electronics_Devices": "https://e-chatbot.kesug.com/electronic-devices/",
+                "Sports": "https://e-chatbot.kesug.com/sports/",
+                "Mens": "https://e-chatbot.kesug.com/mens/",
+                "Shop": "https://e-chatbot.kesug.com/shop/",
+                "FAQs": "https://e-chatbot.kesug.com/faq/",
+                "Cart": "https://e-chatbot.kesug.com/cart/",
+                "Checkout": "https://e-chatbot.kesug.com/checkout/",
+                "Womens": "https://e-chatbot.kesug.com/women/"
+            };
+            if (links[option]) {
+                window.open(links[option], "_blank");
+            } else {
+                alert("You selected: " + option);
+            }
+        }
+
+        function handleFashionOptionClick(option) {
+            const videoLinks = [
+            "https://www.youtube.com/watch?v=mZ1og3srox0&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=ikSl6tjt33A&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=u_NXeWt4eac",
+            "https://www.youtube.com/watch?v=P1HO0wV4lAU&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=al8slDtiuwE&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=Er7uFZNiYqE&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=8-5NggftRYo&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=Uf_c7ZZXIh4&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=N-xflaJOgL4&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=ikSl6tjt33A&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=eLyzfF8AGbA&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=AFmvCb3SDkA&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=vOzt2lCgSKI&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=IQzI4aPrFjU&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=BSyMZ1x9B5g&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D",
+            "https://www.youtube.com/watch?v=aYS8nG0F74o&pp=ygUaMjAyNCBmYXNoaW9uIHRyZW5kcyB2aWRlb3M%3D"
+                // Add more video links as needed
+            ];
+            const blogLinks = [
+               "https://www.whowhatwear.com/",
+                    "https://www.refinery29.com/en-us",
+                    "https://fashionista.com/",
+                    "https://intothegloss.com/",
+                    "https://www.refinery29.com/en-us/2020/10/10130804/why-man-repeller-shut-down-leandra-medine-fashion-aesthetic",
+                    "https://www.thecut.com/",
+                    "https://www.highsnobiety.com/",
+                    "https://www.thefashionspot.com/",
+                    "https://en.wikipedia.org/wiki/Lookbook.nu",
+                    "https://stylecaster.com/",
+                    "https://ecochicblog.com/",
+                    "https://the.ethicalfashionforum.com/about-1",
+                    "https://www.thegoodtrade.com/",
+                // Add more blog links as needed
+            ];
+
+            switch (option.toLowerCase()) {
+                case "videos":
+                    const randomVideo = videoLinks[Math.floor(Math.random() * videoLinks.length)];
+                    window.open(randomVideo, "_blank");
+                    break;
+                case "blogs":
+                    const randomBlog = blogLinks[Math.floor(Math.random() * blogLinks.length)];
+                    window.open(randomBlog, "_blank");
+                    break;
+                
+                    toggleChatbot(); // Close the chatbot
+                    break;
+                default:
+                    alert("You selected: " + option);
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
